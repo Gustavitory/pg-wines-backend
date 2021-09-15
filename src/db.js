@@ -78,8 +78,8 @@ Review.belongsTo(Product);
 User.hasMany(Review);
 Review.belongsTo(User);
 
-// User.hasMany(Address);
-// Address.belongsTo(User);
+User.hasMany(Address);
+Address.belongsTo(User);
 
 
 module.exports = {
