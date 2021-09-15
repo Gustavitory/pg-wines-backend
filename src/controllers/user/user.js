@@ -3,26 +3,22 @@ const { v4: uuidv4 } = require('uuid');
 
 
 async function newUser(req, res, next) {
-    console.log('esta entrando en la funcion')
+
     if (!req.body.name || !req.body.email || !req.body.password) {
         return res.status(400).json({ message: 'Bad request' })
     }
     const photoURL="https://i.imgur.com/vfrW9Xx.png";
     if(req.body.photoURL)photoURL=req.body.photoURL
     const { email, name, password} = req.body
-    console.log('esta haciendo destructuring')
     const  id=uuidv4();
     let user={id,email,name,password,admin:false,photoURL};
     try {
         const exist = await User.findOne({where:{email:user.email}})
-        console.log('valida el email')
         if (exist) { return res.status(500).send({ message: 'El email ya existe.' }) }
         const exist2 = await User.findOne({ where: { name: user.name } })
-        console.log('valida el name')
         if (exist2 !== null) { return res.status(500).json({ message: 'El nombre de usuario ya existe.' }) }
         const id = uuidv4()
-        console.log('valida si existe')
-        
+
         await User.create(user)
         return res.send(user)
     } catch (error) {
