@@ -10,10 +10,10 @@ module.exports = (sequelize) => {
       type: DataTypes.STRING,
       allowNull: false
     },
-    categoryId: {
-      type: DataTypes.INTEGER,
-      allowNull: false
-    },
+//     categoryId: {
+//       type: DataTypes.INTEGER,
+//       allowNull: false
+//     },
     discount: {
       type: DataTypes.INTEGER,
       allowNull: false,
