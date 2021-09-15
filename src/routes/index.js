@@ -25,11 +25,12 @@ router.use('/offers', offers);
 router.use('/resetdb', resetDb);
 
 router.post('/pay', (req, res)=>{
-
-    const {product} = req.body
-    //Product es un array de objetos
+console.log('----------------------------------------')
+    const product = req.body
+    console.log(product)
+    // Product es un array de objetos
     let preference = {
-        items: product,
+        items: [],
         back_urls: {
 			"success": "http://localhost:3001/feedback",
 			"failure": "http://localhost:3001/feedback",
@@ -37,25 +38,32 @@ router.post('/pay', (req, res)=>{
 		},
 		auto_return: 'approved',
       };
-      
+    //   console.log(preference.items[0])
+
+      product.forEach(item=>preference.items.push({
+          title: item.name,
+          unit_price: item.cost,
+          quantity: 1
+      }))
+      console.log(preference.items)
       mercadoPago.preferences.create(preference)
       .then(function(response){
       // Este valor reemplazará el string "<%= global.id %>" en tu HTML
         global.id = response.body.id;
-        console.log(global)
-        res.send({global})
+        console.log(global.id)
+        res.send('aprovado')
       }).catch(function(error){
         console.log(error);
       });
 })
 
-router.get('/feedback', function(request, response) {
-    response.json({
-       Payment: request.query.payment_id,
-       Status: request.query.status,
-       MerchantOrder: request.query.merchant_order_id
-   })
-});
+// router.get('/feedback', function(request, response) {
+//     response.json({
+//        Payment: request.query.payment_id,
+//        Status: request.query.status,
+//        MerchantOrder: request.query.merchant_order_id
+//    })
+// });
 
 router.get("*", (req, res) => {
     res.sendFile(path.join(__dirname, '../../client/index.html'));
