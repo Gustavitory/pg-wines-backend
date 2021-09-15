@@ -95,7 +95,6 @@ async function getProductById(req, res) {
             stock: productById.stock,
             cost: productById.cost,
             description: productById.description,
-            discount: productById.discount,
             capacity: productById.capacity,
             image: productById.image,
             sales: productById.sales,
@@ -112,10 +111,10 @@ async function getProductById(req, res) {
 
 async function postProduct(req, res) {
     //required fields: name, cost, capacity, categoryId, brandId, packingId
-    //non required fields:  stock=0, description="", discount=0, image=[], sales=0, 
+    //non required fields:  stock=0, description="", image=[], sales=0, 
     const { 
         name, cost, capacity, categoryId, brandId, packingId,
-        stock, description, discount, sales 
+        stock, description, sales 
     } = req.body;
     const image = req.file? req.file.filename : undefined;
     try {
@@ -126,7 +125,6 @@ async function postProduct(req, res) {
                 stock,
                 cost,
                 description,
-                discount,
                 capacity,
                 image: result ? result.secure_url.split() : [],
                 sales
@@ -146,13 +144,13 @@ async function postProduct(req, res) {
 
 async function updateProduct(req, res) {
     //required fields: name, cost, capacity, categoryId, brandId, packingId
-    //non required fields:  stock=0, description="", discount=0, image=[], sales=0, 
+    //non required fields:  stock=0, description="", image=[], sales=0, 
     const { 
         id, name, cost, capacity, categoryId, brandId, packingId,
-        stock, description, discount, image, sales
+        stock, description, image, sales
     } = req.body;
     if (!id) return res.status(422).send({ error: 'The product id is required' });
-    if (!name && !stock && !cost && !description && !discount && !capacity && !image && !sales && !categoryId && !brandId && !packingId) {
+    if (!name && !stock && !cost && !description && !capacity && !image && !sales && !categoryId && !brandId && !packingId) {
         return res.status(422).send({ error: 'You should specified at least one valid field.' });
     }
     try {
@@ -162,7 +160,6 @@ async function updateProduct(req, res) {
         if (description) { product.description = description }
         if (stock) { product.stock = stock }
         if (cost) { product.cost = cost }
-        if (discount) { product.discount = discount }
         if (capacity) { product.capacity = capacity }
         if (image) { product.price = image }
         if (sales) { product.sales = sales }

@@ -2,13 +2,14 @@ const { DataTypes, UUID } = require('sequelize');
 
 module.exports = (sequelize) => {
   //See constraints here => https://sequelize.org/master/manual/validations-and-constraints.html
-  sequelize.define('user', {   
-    // id:{
-    //   type: DataTypes.UUID,
-    //   allowNull:false,
-    //   primaryKey:true
-    // }, 
-    displayName: {
+  sequelize.define('user', {      
+
+    id:{
+      type: DataTypes.UUID,
+      allowNull:false,
+      primaryKey:true
+    }, 
+    name: {
       type: DataTypes.STRING,
       allowNull: false,
       unique: true
@@ -16,11 +17,7 @@ module.exports = (sequelize) => {
     password: {
       type: DataTypes.STRING(64),
       is: /^[0-9a-f]{64}$/i,
-      allowNull: false
-    },
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false
+      allowNull: true
     },
     email: {
       type: DataTypes.STRING,
@@ -36,7 +33,18 @@ module.exports = (sequelize) => {
     admin: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
+    },
+    birthDate: {
+      type: DataTypes.DATEONLY,
       allowNull: false,
-    }
+    },
+    active: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true,
+    },
+    phone: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
   });
 };
