@@ -51,7 +51,7 @@ console.log('----------------------------------------')
       // Este valor reemplazará el string "<%= global.id %>" en tu HTML
         global.id = response.body.id;
         console.log(global.id)
-        res.send('aprovado')
+        res.send(global.id)
       }).catch(function(error){
         console.log(error);
       });
