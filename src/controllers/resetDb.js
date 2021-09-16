@@ -6,7 +6,7 @@ const { bulkCreateBrands } = require('./brandsLoader');
 const { bulkCreatePacking } = require('./packingLoader');
 
 function resetDb(req, res) {
-    conn.sync({ force: true })
+    conn.sync({ alter: true })
         .then(async () => await bulkCreateCategories())
         .then(async () => await bulkCreateBrands())
         .then(async () => await bulkCreatePacking())
