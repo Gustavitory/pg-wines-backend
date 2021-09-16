@@ -76,7 +76,7 @@ async function postOffer(req, res) {
 // }
 
 async function updateOffer(req, res) {
-    const { status, categoryId, discount, from, until, slug } = req.body; 
+    const { id, status, categoryId, discount, from, until, slug } = req.body; 
     const image = req.file? req.file.filename : undefined;
     if (!id) return res.status(422).send({ error: 'The offer id is required' });
 
