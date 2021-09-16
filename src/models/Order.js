@@ -8,7 +8,7 @@ module.exports = (sequelize) => {
         allowNull: false,
       },
       shippingStatus: {
-        type: DataTypes.STRING, //'uninitiated', 'processing', 'approved', 'cancelled''uninitiated', 'processing', 'approved', 'cancelled'
+        type: DataTypes.STRING, //'uninitiated', 'processing', 'approved', 'cancelled'
         defaultValue: 'uninitiated',
         allowNull: false,
       },

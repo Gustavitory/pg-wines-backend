@@ -203,11 +203,13 @@ const updateShipStatus = async (req, res, next) => {
             },
         })
         let templateproductsshippingapproved = ''
-        products.Products.forEach(el => templateproductsshippingapproved+=`<li>${el.name}</li>`)
+        console.log("products: " + JSON.stringify(products))
+        products.products.forEach(el => templateproductsshippingapproved+=`<li>${el.name}</li>`)
         if(status === 'approved') {
+            console.log("Hello");
             const user = await User.findOne({
                 where: {
-                    id: orderToUpdate.UserId
+                    id: orderToUpdate.userId
                 }
             })
             try {
