@@ -56,25 +56,6 @@ async function postOffer(req, res) {
     }
 }
 
-// async function updateOffer(req, res) {
-//     const { id, status, slug, productId } = req.body;
-//     const image = req.file? req.file.filename : undefined;
-//     if (!id) return res.status(422).send({ error: 'The offer id is required' });
-
-//     try {
-//         const offer = await Offer.findByPk(id);
-//         if (!offer) return res.status(422).send({ error: 'The offer id is wrong' });
-//         status ? offer.status = status : offer.status = offer.status;
-//         image ? offer.image = image : offer.image = offer.image;
-//         slug ? offer.slug = slug : offer.slug = offer.slug;
-//         productId ? offer.productId = productId : offer.productId = offer.productId;
-//         await offer.save();
-//         return res.send('The offer has been updated suscesfully');
-//     } catch (err) {
-//         console.log('ERROR in updateOffer', err);
-//     }
-// }
-
 async function updateOffer(req, res) {
     const { id, status, categoryId, discount, from, until, slug } = req.body; 
     const image = req.file? req.file.filename : undefined;
