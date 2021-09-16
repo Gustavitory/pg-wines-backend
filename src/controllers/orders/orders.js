@@ -4,6 +4,7 @@ const { Op } = require('sequelize')
 const exclude = ['createdAt', 'updatedAt']
 
 const getAllOrders = async (req, res, next) => {
+    console.log('ok')
     let {status, shippingStatus} = req.query
     if(status === '' || status === 'undefined') status = null
     if(shippingStatus === '' || shippingStatus === 'undefined') shippingStatus = null
@@ -166,7 +167,8 @@ const updateOrderStatus = async (req, res, next) => {
 const updateShipStatus = async (req, res, next) => {
     const {name, email} = req.headers
     const {id} = req.body;
-    const {status} = req.body;    
+    const {status} = req.body; 
+    console.log({name, email, id, status})   
     if (!id) return res.status(400).send('El id de la orden es requerida')
     if (!status) return res.status(400).send('El status a actualizar es requerido');
     if(!['uninitiated', 'processing','approved', 'cancelled'].includes(status)) return res.status(400).send('El status a actualizar es invalido');
