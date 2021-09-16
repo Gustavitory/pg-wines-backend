@@ -1,4 +1,4 @@
-const { DataTypes, Sequelize } = require('sequelize');
+const { DataTypes, Sequelize, UUID } = require('sequelize');
 
 module.exports = (sequelize) => {
     sequelize.define('order', {    
@@ -21,6 +21,9 @@ module.exports = (sequelize) => {
         defaultValue: 'mercado_pago',
         allowNull: false,
       },
+      userId: {
+        type: DataTypes.UUID
+      }
     });
   };
 

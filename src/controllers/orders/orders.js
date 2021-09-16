@@ -39,10 +39,11 @@ const getAllOrders = async (req, res, next) => {
 
 const userOrders = async (req, res, next) => {
     const {idUser} = req.params
+    console.log(idUser)
     try {
         const userOrders = await Order.findAll({
             where: {
-                UserId: idUser,
+                userId: idUser,
                 status: 'cart'
             },
             include:{
@@ -139,11 +140,11 @@ const updateOrderStatus = async (req, res, next) => {
     if (!UserId) return res.status(400).send('El id del usuario es requerido')
     if (!status) return res.status(400).send('El status a actualizar es requerido');
     if(!['approved', 'cancelled','pending'].includes(status)) return res.status(400).send('El status a actualizar es invalido');
-
+    
     try {
         const orderToUpdate = await Order.findOne({
             where: {
-                UserId
+                userId: UserId
             }
         })
         if (!orderToUpdate) return res.status(400).send('El id de la orden enviada es inválido');
@@ -155,8 +156,10 @@ const updateOrderStatus = async (req, res, next) => {
             orderToUpdate.shippingStatus === 'approved'
             await orderToUpdate.save()
         }
+        console.log("orderToUpdate => " + JSON.stringify(orderToUpdate));
+        return res.send("Go");
     } catch (err) {
-        next(error)
+        next(err)
     }
 }
 
