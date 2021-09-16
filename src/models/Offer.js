@@ -10,10 +10,10 @@ module.exports = (sequelize) => {
       type: DataTypes.STRING,
       allowNull: false
     },
-    categoryId: {
-      type: DataTypes.INTEGER,
-      allowNull: false
-    },
+    // categoryId: {
+    //   type: DataTypes.INTEGER,
+    //   allowNull: false
+    // },
     discount: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -30,7 +30,7 @@ module.exports = (sequelize) => {
     slug: {
       type: DataTypes.STRING,
       defaultValue: "",
-      allowNull: false
+      allowNull: true
     }
   });
 };
