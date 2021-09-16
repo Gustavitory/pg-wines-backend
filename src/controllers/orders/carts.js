@@ -67,7 +67,7 @@ const addCartItem = async (req, res, next) => {
     }
 };
 
-const getCartEmpty = async (req, res, next) => {
+const deleteCartEmpty = async (req, res, next) => {
     const { idUser } = req.params     
     try {
         const orderUser = await Order.findAll({
@@ -91,11 +91,11 @@ const getCartEmpty = async (req, res, next) => {
 };
 
 const getAllCartItems = async (req, res, next, idUser = null) => {
-    try {
+    try {       
         if (!req.params.idUser) return next({message: "el ID de usuario es requerido"})
         let order = await Order.findOne({
             where: {
-                UserId: req.params.idUser,
+                userId: req.params.idUser,
                 status: 'cart'
             },
             attributes: {
@@ -104,7 +104,7 @@ const getAllCartItems = async (req, res, next, idUser = null) => {
         })
         if(!order) {
             order = await Order.create({
-                UserId: req.params.idUser,
+                userId: req.params.idUser,
             })
         }
         const raw_cart = await Product.findAll({
@@ -122,7 +122,7 @@ const getAllCartItems = async (req, res, next, idUser = null) => {
 
         let cart = []
 
-        raw_cart.map(i => {
+        raw_cart?.map(i => {
             let prod = {};
 
             prod.id = i.id
@@ -133,8 +133,8 @@ const getAllCartItems = async (req, res, next, idUser = null) => {
             prod.stock = i.stock
             prod.selled = i.selled
             prod.perc_desc = i.perc_desc
-            i.Orders.map(j => {
-                prod.quantity = j.OrderProduct.quantity
+            i.orders.map(j => {
+                prod.quantity = j.orderProduct.quantity
             })
             cart.push(prod)
         })
@@ -158,8 +158,10 @@ const editCartQuantity = async (req, res, next) => {
         const product = await Product.findByPk(req.body.id);
         const quantity = req.body.quantity;
         const cost = product.cost;
-        let order = await Order.findOne({ where: { UserId: req.params.idUser, status: 'cart' } });
+        let order = await Order.findOne({ where: { userId: req.params.idUser, status: 'cart' } });
+        console.log({order})
         const updatedQuantity = await product.addOrder(order, { through: { orderID: order.id, quantity, cost } })
+        return res.json({ message: "Producto actulizado correctamente" });
         next();
     } catch (error) {
         next(error)
@@ -170,7 +172,7 @@ const deleteCartItem = async (req, res, next) => {
     const { idUser, idProduct } = req.params;
     if (!req.params.idUser) return res.json({message: " El ID de la orden y del producto son requeridos "})
     try {
-        const orderId = await Order.findOne({ where: { UserId: idUser, status: 'cart' } });
+        const orderId = await Order.findOne({ where: { userId: idUser, status: 'cart' } });
         if (!orderId) {
             return res.status(400).send("Orden no encontrado")
         };
@@ -183,54 +185,54 @@ const deleteCartItem = async (req, res, next) => {
     }
 };
 
-async function fullDbOrders() {
-    try {
-        const products = await Product.findAll()
-        for (let i of usersDBJson) {
-            let productIndex1=0
-            let productIndex2=5
-            let productIndex3=10
-            try {
-                const user = await User.findOne({
-                    where: {
-                        name: i.name
-                    }
-                })
-                let product1 = products[productIndex1++]
-                let product2 = products[productIndex2++]
-                let product3 = products[productIndex3++]
-                const order = await Order.create()
-                await user.addOrder(order);
-                await OrderProduct.create({
-                    orderID: order.id,
-                    productID: product1.id,
-                    quantity: 1,
-                    cost: product1.cost
-                })
-                await OrderProduct.create({
-                    orderID: order.id,
-                    productID: product2.id,
-                    quantity: 1,
-                    cost: product2.cost
-                })
-                await OrderProduct.create({
-                    orderID: order.id,
-                    productID: product3.id,
-                    quantity: 1,
-                    cost: product3.cost
-                })
-            } catch (error) {
-                console.error(error);
-            }
-        }
-    } catch(err) {
-        console.error(err)
-    }
-}
+// async function fullDbOrders() {
+//     try {
+//         const products = await Product.findAll()
+//         for (let i of usersDBJson) {
+//             let productIndex1=0
+//             let productIndex2=5
+//             let productIndex3=10
+//             try {
+//                 const user = await User.findOne({
+//                     where: {
+//                         name: i.name
+//                     }
+//                 })
+//                 let product1 = products[productIndex1++]
+//                 let product2 = products[productIndex2++]
+//                 let product3 = products[productIndex3++]
+//                 const order = await Order.create()
+//                 await user.addOrder(order);
+//                 await OrderProduct.create({
+//                     orderID: order.id,
+//                     productID: product1.id,
+//                     quantity: 1,
+//                     cost: product1.cost
+//                 })
+//                 await OrderProduct.create({
+//                     orderID: order.id,
+//                     productID: product2.id,
+//                     quantity: 1,
+//                     cost: product2.cost
+//                 })
+//                 await OrderProduct.create({
+//                     orderID: order.id,
+//                     productID: product3.id,
+//                     quantity: 1,
+//                     cost: product3.cost
+//                 })
+//             } catch (error) {
+//                 console.error(error);
+//             }
+//         }
+//     } catch(err) {
+//         console.error(err)
+//     }
+// }
 
 module.exports = {
     addCartItem,
-    getCartEmpty,
+    deleteCartEmpty,
     getAllCartItems,
     editCartQuantity,
     deleteCartItem,
