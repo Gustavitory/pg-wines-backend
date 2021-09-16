@@ -4,6 +4,7 @@ const { Op } = require('sequelize')
 const exclude = ['createdAt', 'updatedAt']
 
 const getAllOrders = async (req, res, next) => {
+    console.log('ok')
     let {status, shippingStatus} = req.query
     if(status === '' || status === 'undefined') status = null
     if(shippingStatus === '' || shippingStatus === 'undefined') shippingStatus = null
@@ -39,10 +40,11 @@ const getAllOrders = async (req, res, next) => {
 
 const userOrders = async (req, res, next) => {
     const {idUser} = req.params
+    console.log(idUser)
     try {
         const userOrders = await Order.findAll({
             where: {
-                UserId: idUser,
+                userId: idUser,
                 status: 'cart'
             },
             include:{
@@ -139,11 +141,11 @@ const updateOrderStatus = async (req, res, next) => {
     if (!UserId) return res.status(400).send('El id del usuario es requerido')
     if (!status) return res.status(400).send('El status a actualizar es requerido');
     if(!['approved', 'cancelled','pending'].includes(status)) return res.status(400).send('El status a actualizar es invalido');
-
+    
     try {
         const orderToUpdate = await Order.findOne({
             where: {
-                UserId
+                userId: UserId
             }
         })
         if (!orderToUpdate) return res.status(400).send('El id de la orden enviada es inválido');
@@ -155,15 +157,18 @@ const updateOrderStatus = async (req, res, next) => {
             orderToUpdate.shippingStatus === 'approved'
             await orderToUpdate.save()
         }
+        console.log("orderToUpdate => " + JSON.stringify(orderToUpdate));
+        return res.send("Go");
     } catch (err) {
-        next(error)
+        next(err)
     }
 }
 
 const updateShipStatus = async (req, res, next) => {
     const {name, email} = req.headers
     const {id} = req.body;
-    const {status} = req.body;    
+    const {status} = req.body; 
+    console.log({name, email, id, status})   
     if (!id) return res.status(400).send('El id de la orden es requerida')
     if (!status) return res.status(400).send('El status a actualizar es requerido');
     if(!['uninitiated', 'processing','approved', 'cancelled'].includes(status)) return res.status(400).send('El status a actualizar es invalido');
@@ -200,11 +205,13 @@ const updateShipStatus = async (req, res, next) => {
             },
         })
         let templateproductsshippingapproved = ''
-        products.Products.forEach(el => templateproductsshippingapproved+=`<li>${el.name}</li>`)
+        console.log("products: " + JSON.stringify(products))
+        products.products.forEach(el => templateproductsshippingapproved+=`<li>${el.name}</li>`)
         if(status === 'approved') {
+            console.log("Hello");
             const user = await User.findOne({
                 where: {
-                    id: orderToUpdate.UserId
+                    id: orderToUpdate.userId
                 }
             })
             try {

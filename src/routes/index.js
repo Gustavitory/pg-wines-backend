@@ -5,9 +5,11 @@ const categories = require('./categories');
 const brands = require('./brands');
 const packing = require('./packing');
 const user= require('./user');
+const orders = require('./orders');
 const offers = require('./offers');
+const carts = require('./carts');
 const resetDb = require('./resetDb');
-const mercadoPago = require('mercadopago')
+const mercadoPago = require('mercadopago');
 
 mercadoPago.configure({
     access_token: 'TEST-3476617001259774-091513-b3f9c1dbd722b4bf1f4c6b591295229b-402890618'
@@ -23,6 +25,8 @@ router.use('/packing', packing);
 router.use('/user',user);
 router.use('/offers', offers);
 router.use('/resetdb', resetDb);
+router.use('/orders', orders);
+router.use('/carts', carts);
 
 router.post('/pay', (req, res)=>{
 console.log('----------------------------------------')

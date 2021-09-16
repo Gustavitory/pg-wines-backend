@@ -1,5 +1,5 @@
 require('dotenv').config();
-const { Offer } = require('../db');
+const { Offer, Product } = require('../db');
 const cloudinary = require('cloudinary');
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -19,21 +19,37 @@ async function getOffers(req, res) {
 }
 
 async function postOffer(req, res) {
-    const { status, slug, productId } = req.body;
+    const { status, categoryId, discount, from, until, slug } = req.body;
     const image = req.file? req.file.filename : undefined;
     try {
-        if (status && image && productId) {
+        if (status && image && categoryId && discount && from && until) {
             const result = await cloudinary.v2.uploader.upload(req.file.path);
             const createdOffer = await Offer.create({
                 status,
                 image: result.secure_url,
+                discount,
+                from,
+                until,
                 slug
             });
-            createdOffer.setProduct(productId);
-            await fs.unlink(req.file.path);
+            createdOffer.setCategory(categoryId);         
+            await fs.unlink(req.file.path);         
+            
+            //start: set discount to all products from categoryId
+            const products = await Product.findAll({
+                where: {
+                    categoryId: categoryId
+                }
+            });
+            products.map(elem => {
+                elem.discount = discount;
+                elem.save();
+            });
+            //end: set discount to all products from categoryId
+
             res.send(createdOffer);
         } else {
-            res.status(422).send({ error: 'Fields status, image and productId are required' })
+            res.status(422).send({ error: 'Fields status, image and categoryId are required' })
         }
     } catch (err) {
         console.log('ERROR in postOffer', err);
@@ -41,7 +57,7 @@ async function postOffer(req, res) {
 }
 
 async function updateOffer(req, res) {
-    const { id, status, slug, productId } = req.body;
+    const { id, status, categoryId, discount, from, until, slug } = req.body; 
     const image = req.file? req.file.filename : undefined;
     if (!id) return res.status(422).send({ error: 'The offer id is required' });
 
@@ -50,8 +66,11 @@ async function updateOffer(req, res) {
         if (!offer) return res.status(422).send({ error: 'The offer id is wrong' });
         status ? offer.status = status : offer.status = offer.status;
         image ? offer.image = image : offer.image = offer.image;
+        categoryId ? offer.categoryId = categoryId : offer.categoryId = offer.categoryId;
+        discount ? offer.discount = discount : offer.discount = offer.discount;
+        from ? offer.from = from : offer.from = offer.from;
+        until ? offer.until = until : offer.until = offer.until;
         slug ? offer.slug = slug : offer.slug = offer.slug;
-        productId ? offer.productId = productId : offer.productId = offer.productId;
         await offer.save();
         return res.send('The offer has been updated suscesfully');
     } catch (err) {

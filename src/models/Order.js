@@ -1,4 +1,4 @@
-const { DataTypes, Sequelize } = require('sequelize');
+const { DataTypes, Sequelize, UUID } = require('sequelize');
 
 module.exports = (sequelize) => {
     sequelize.define('order', {    
@@ -8,12 +8,13 @@ module.exports = (sequelize) => {
         allowNull: false,
       },
       shippingStatus: {
-        type: DataTypes.STRING, //'uninitiated', 'processing', 'approved', 'cancelled''uninitiated', 'processing', 'approved', 'cancelled'
+        type: DataTypes.STRING, //'uninitiated', 'processing', 'approved', 'cancelled'
         defaultValue: 'uninitiated',
         allowNull: false,
       },
       date: {
         type: DataTypes.DATE,
+        defaultValue: new Date(),
         allowNull: false,
       },
       payment: {
@@ -21,6 +22,9 @@ module.exports = (sequelize) => {
         defaultValue: 'mercado_pago',
         allowNull: false,
       },
+      userId: {
+        type: DataTypes.UUID
+      }
     });
   };
 
