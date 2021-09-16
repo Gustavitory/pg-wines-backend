@@ -7,6 +7,7 @@ const packing = require('./packing');
 const user= require('./user');
 const orders = require('./orders');
 const offers = require('./offers');
+const carts = require('./carts');
 const resetDb = require('./resetDb');
 const mercadoPago = require('mercadopago');
 
@@ -25,6 +26,7 @@ router.use('/user',user);
 router.use('/offers', offers);
 router.use('/resetdb', resetDb);
 router.use('/orders', orders);
+router.use('/carts', carts);
 
 router.post('/pay', (req, res)=>{
 console.log('----------------------------------------')

@@ -14,6 +14,7 @@ module.exports = (sequelize) => {
       },
       date: {
         type: DataTypes.DATE,
+        defaultValue: new Date(),
         allowNull: false,
       },
       payment: {
