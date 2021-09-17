@@ -7,7 +7,7 @@ async function sendEmail(clientName, clientEmail, newPurchase = true) {   // new
     if (!clientName) return console.log('You must specify the client´s name.');
     if (!clientEmail) return console.log('You must specify the client´s Email.');
 
-    // Datos para el login a la cuenta emisora del email.
+    // Datos para el login de la cuenta emisora del email, es decir, la cuenta de email de Bodegas Del Sur.
     var transporter = nodemailer.createTransport({      
         host: 'smtp.gmail.com',   // Servidor SMTP de gmail.
         port: 465,        // El puerto del servidor SMTP de Gmail predeterminado es 465 para SSL y 587 para TSL. (defaults to 587 if is secure is false or 465 if true)
@@ -36,7 +36,7 @@ async function sendEmail(clientName, clientEmail, newPurchase = true) {   // new
         <p>${emailMessaje}</p>
         <br>
         <br>
-        <img src='https://www.conosur.com/wp-content/uploads/2018/08/pinot-noir.png' alt="Imagen en email" width="300" height="150" />
+        <img src='https://www.conosur.com/wp-content/uploads/2018/08/pinot-noir.png' alt="Imagen en email" width="400" height="72" />
         <br>
         <br>
         <h1 style="color: #0000ff"><b>Bodegas Del Sur</b></h1>
