@@ -40,15 +40,15 @@ async function postOffer(req, res) {
             createdOffer.setCategory(categoryId);         
             
             //start: set discount to all products from categoryId
-            const products = await Product.findAll({
-                where: {
-                    categoryId: categoryId
-                }
-            });
-            products.map(elem => {
-                elem.discount = discount;
-                elem.save();
-            });
+            // const products = await Product.findAll({
+            //     where: {
+            //         categoryId: categoryId
+            //     }
+            // });
+            // products.map(elem => {
+            //     elem.discount = discount;
+            //     elem.save();
+            // });
             //end: set discount to all products from categoryId
 
             res.send(createdOffer);

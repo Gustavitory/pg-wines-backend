@@ -1,6 +1,6 @@
 require('dotenv').config();
 const { Op } = require('sequelize');
-const { Product,Category,Brand } = require('../db');
+const { Product,Category,Brand, Offer } = require('../db');
 const cloudinary = require('cloudinary');
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -89,18 +89,34 @@ async function getProductById(req, res) {
             {
                 include: ["category", "brand", "packing"],
             })
-        productById = {
-            id: productById.id,
-            name: productById.name,
-            stock: productById.stock,
-            cost: productById.cost,
-            description: productById.description,
-            capacity: productById.capacity,
-            image: productById.image,
-            sales: productById.sales,
-            category: productById.category,
-            brand: productById.brand,
-            packing: productById.packing
+        const fechaActual = new Date();
+        const offers = await Offer.findAll({
+            where: {
+                categoryId: productById.category.id,
+                from: {
+                    [Op.lte]: fechaActual
+                },
+                until: {
+                    [Op.gte]: fechaActual
+                }
+            }
+        });
+        if (offers.length !== 0) {
+            productById = {
+                id: productById.id,
+                name: productById.name,
+                stock: productById.stock,
+                cost: productById.cost,
+                discount: offers[0].discount,
+                daysUntilFinishDiscount: Math.floor((offers[0].until - fechaActual)/(1000*60*60*24)),
+                description: productById.description,
+                capacity: productById.capacity,
+                image: productById.image,
+                sales: productById.sales,
+                category: productById.category,
+                brand: productById.brand,
+                packing: productById.packing
+            }
         }
         return res.send(productById)
     } catch (err) {
