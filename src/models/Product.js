@@ -29,7 +29,7 @@ module.exports = (sequelize) => {
       allowNull: false
     },
     image: {
-      type: DataTypes.ARRAY(DataTypes.STRING),
+      type: DataTypes.ARRAY(DataTypes.STRING(1000)),
       allowNull: true,
       defaultValue: []
     },
