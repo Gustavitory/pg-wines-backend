@@ -51,7 +51,7 @@ server.use(multer({
     }
     cb("Error: Image must be an image file type (Supported formats are JPEG, JPG, PNG, GIF).");
   }
-}).single('image'));
+}).array('image', 4));
 
 server.use(express.static(path.join(__dirname, '../client')));
 

@@ -7,13 +7,9 @@ module.exports = (sequelize) => {
       allowNull: false
     },
     image: {
-      type: DataTypes.STRING,
+      type: DataTypes.ARRAY(DataTypes.STRING(1000)),
       allowNull: false
     },
-    // categoryId: {
-    //   type: DataTypes.INTEGER,
-    //   allowNull: false
-    // },
     discount: {
       type: DataTypes.INTEGER,
       allowNull: false,

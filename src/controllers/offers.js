@@ -20,20 +20,24 @@ async function getOffers(req, res) {
 
 async function postOffer(req, res) {
     const { status, categoryId, discount, from, until, slug } = req.body;
-    const image = req.file? req.file.filename : undefined;
+    const image = req.files ? req.files : undefined;
     try {
         if (status && image && categoryId && discount && from && until) {
-            const result = await cloudinary.v2.uploader.upload(req.file.path);
+            var result = [];
+            for (i=0; i<image.length; i++) {
+                result[i] = await cloudinary.v2.uploader.upload(req.files[i].path);
+                await fs.unlink(req.files[i].path);
+            }
+            result = result.map(elem => elem.secure_url);
             const createdOffer = await Offer.create({
                 status,
-                image: result.secure_url,
+                image: result,
                 discount,
                 from,
                 until,
                 slug
             });
             createdOffer.setCategory(categoryId);         
-            await fs.unlink(req.file.path);         
             
             //start: set discount to all products from categoryId
             const products = await Product.findAll({

@@ -116,23 +116,29 @@ async function postProduct(req, res) {
         name, cost, capacity, categoryId, brandId, packingId,
         stock, description, sales 
     } = req.body;
-    const image = req.file? req.file.filename : undefined;
+    const image = req.files ? req.files : undefined;
     try {
         if (name && cost && capacity && categoryId && brandId && packingId) {
-            const result = req.file ? await cloudinary.v2.uploader.upload(req.file.path) : undefined;
+            var result = [];
+            if (image) {
+                for (i=0; i<image.length; i++) {
+                    result[i] = await cloudinary.v2.uploader.upload(req.files[i].path);
+                    await fs.unlink(req.files[i].path);
+                }
+                result = result.map(elem => elem.secure_url);
+            }
             var createdProduct = await Product.create({
                 name,
                 stock,
                 cost,
                 description,
                 capacity,
-                image: result ? result.secure_url.split() : [],
+                image: image ? result : [],
                 sales
             });
             await createdProduct.setCategory(categoryId);
             await createdProduct.setBrand(brandId);
             await createdProduct.setPacking(packingId);
-            await fs.unlink(req.file.path);
             res.send(createdProduct);
         } else {
             res.status(422).send({ error: 'These data are required: name, cost, capacity, categoryId, brandId, packingId' })
