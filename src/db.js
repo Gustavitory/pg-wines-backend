@@ -81,6 +81,8 @@ Review.belongsTo(User);
 User.hasMany(Address);
 Address.belongsTo(User);
 
+User.belongsToMany(Product, {through: 'favourites', foreignKey: 'UserId'});
+Product.belongsToMany(User, {through: 'favourites', foreignKey: 'ProductId'})
 
 module.exports = {
   ...sequelize.models, // para poder importar los modelos así: const { Product, User } = require('./db.js');
