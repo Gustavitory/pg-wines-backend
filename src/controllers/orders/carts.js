@@ -122,7 +122,7 @@ const getAllCartItems = async (req, res, next, idUser = null) => {
 
         let cart = []
 
-        raw_cart?.map(i => {
+        raw_cart.map(i => {
             let prod = {};
 
             prod.id = i.id

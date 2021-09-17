@@ -1,4 +1,5 @@
 const { User, Product, Order, OrderProduct } = require('../../db.js');
+const { sendEmail } = require('../sendEmail');
 const { Op } = require('sequelize')
 
 const exclude = ['createdAt', 'updatedAt']
@@ -208,25 +209,12 @@ const updateShipStatus = async (req, res, next) => {
         console.log("products: " + JSON.stringify(products))
         products.products.forEach(el => templateproductsshippingapproved+=`<li>${el.name}</li>`)
         if(status === 'approved') {
-            console.log("Hello");
             const user = await User.findOne({
                 where: {
                     id: orderToUpdate.userId
                 }
             })
-            try {
-                await axios(`http://localhost:3000/user/sendmail?type=shippingApproved`,{
-                    headers: {
-                        nameshippingapproved: name,
-                        emailshippingapproved: email,
-                        templateproductsshippingapproved,
-                        // shippingAddress: user.shippingAddress
-                        shippingaddress: 'Y eiaaaaa'
-                    }
-                })
-            } catch(error) {
-                console.error(error)
-            }
+            sendEmail(user.name, user.email, false);  // Le envio un email al usuario correspondiente para avisarle que su compra ha sido despachada.
         }
         return res.send(orders)        
     } catch (err) {
