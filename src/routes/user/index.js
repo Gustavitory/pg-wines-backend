@@ -6,7 +6,7 @@ const { getAllUsers, updateUser, deleteUser, loginUser, newUser, getUserByEmail 
 const router = Router();
 
 router.get('/', getAllUsers);
-router.get('/login', loginUser);
+router.post('/login', loginUser);
 router.get('/byemail', getUserByEmail);
 router.put('/', updateUser); 
 router.delete('/:id', deleteUser); 
