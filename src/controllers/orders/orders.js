@@ -4,7 +4,6 @@ const { Op } = require('sequelize')
 const exclude = ['createdAt', 'updatedAt']
 
 const getAllOrders = async (req, res, next) => {
-    console.log('ok')
     let {status, shippingStatus} = req.query
     if(status === '' || status === 'undefined') status = null
     if(shippingStatus === '' || shippingStatus === 'undefined') shippingStatus = null
@@ -52,7 +51,7 @@ const userOrders = async (req, res, next) => {
             }
         })
         if (!userOrders.length) {
-            return res.status(201).send('El usuario requerido no tiene ninguna orden')
+            return res.status(201).send({ error:'The required user has no order' })
         }
         return res.send(userOrders)
     } catch (error) {
@@ -82,34 +81,33 @@ const getOrderById = async (req, res, next) => {
             }
         })
         return res.send(order)
-    } catch (err) {
-        next(err)
+    } catch (error) {
+        next(error)
     }
 };
 
 const updateOrder = async (req, res, next) => {
     const { id } = req.params
     const { products } = req.body
-    if (!id) return res.status(400).send('El id de la orden es requerido')
-    if (!products) return res.status(400).send('Los productos a actualizar son requeridos')
+    if (!id) return res.status(422).send({ error: 'The order id is required' })
+    if (!products) return res.status(422).send({ error: 'The products to update are required'})
     try {
         const orderToDelete = await Order.findByPk(id)
-        if (!orderToDelete) return res.status(400).send('El id de la orden enviada es inválido')
+        if (!orderToDelete) return res.status(404).send({ error: 'The id of the order sent is invalid' })
         const UserId = orderToDelete.UserId
         const user = await User.findByPk(UserId);
-        if (!user) return res.status(400).send('El usuario es inválido')
+        if (!user) return res.status(404).send({ error: 'User is invalid' });
         const verifiedProductsPromises = products.map(async productToAdd => {
             try {
                 const product = await Product.findByPk(productToAdd.id);
                 if (!product) {
-                    return 'El id de alguno de los productos enviados es inválido'
+                    return res.status(400).send({ error: 'The id of some of the products sent is invalid' }) 
                 };
                 if (product.stock < productToAdd.quantity) {
-                    return 'No hay stock suficiente de alguno de los productos'
+                    return res.status(404).send({ error: 'There is not enough stock of any of the products'})
                 }
-            } catch (err) {
-                console.error(err)
-                return err
+            } catch (error) {
+                return error;
             }
         })
         const error = await Promise.all(verifiedProductsPromises).then(result => result).catch(err => err)
@@ -128,7 +126,7 @@ const updateOrder = async (req, res, next) => {
                 console.error(err)
             }
         })
-        return res.send('La orden fue actualizada con éxito')
+        return res.send('The order was updated successfully')
     } catch (err) {
         return res.status(400).send(err)
     }
@@ -138,9 +136,9 @@ const updateOrder = async (req, res, next) => {
 const updateOrderStatus = async (req, res, next) => {
     const {UserId} = req.params;
     const {status} = req.body;
-    if (!UserId) return res.status(400).send('El id del usuario es requerido')
-    if (!status) return res.status(400).send('El status a actualizar es requerido');
-    if(!['approved', 'cancelled','pending'].includes(status)) return res.status(400).send('El status a actualizar es invalido');
+    if (!UserId) return res.status(404).send({ error: 'User id is required' });
+    if (!status) return res.status(404).send({ error: 'The status to update is required' });
+    if(!['approved', 'cancelled','pending'].includes(status)) return res.status(404).send({ error: 'The status to update is invalid' });
     
     try {
         const orderToUpdate = await Order.findOne({
@@ -148,7 +146,7 @@ const updateOrderStatus = async (req, res, next) => {
                 userId: UserId
             }
         })
-        if (!orderToUpdate) return res.status(400).send('El id de la orden enviada es inválido');
+        if (!orderToUpdate) return res.status(404).send({ error: 'The id of the order sent is invalid'});
         if(orderToUpdate.status === 'cart') {
             orderToUpdate.status = status
             await orderToUpdate.save()
@@ -169,16 +167,16 @@ const updateShipStatus = async (req, res, next) => {
     const {id} = req.body;
     const {status} = req.body; 
     console.log({name, email, id, status})   
-    if (!id) return res.status(400).send('El id de la orden es requerida')
-    if (!status) return res.status(400).send('El status a actualizar es requerido');
-    if(!['uninitiated', 'processing','approved', 'cancelled'].includes(status)) return res.status(400).send('El status a actualizar es invalido');
+    if (!id) return res.status(404).send({ error: 'The order id is required'});
+    if (!status) return res.status(404).send({ error: 'The status to update is required' });
+    if(!['uninitiated', 'processing','approved', 'cancelled'].includes(status)) return res.status(404).send({ error: 'The status to update is invalid' });
     try {
         const orderToUpdate = await Order.findOne({
             where: {
                 id
             }
         })
-        if (!orderToUpdate) return res.status(400).send('El id de la orden enviada es inválido');        
+        if (!orderToUpdate) return res.status(404).send({ error: 'The id of the order sent is invalid' });        
         orderToUpdate.shippingStatus = status
         await orderToUpdate.save()
         const orders = await Order.findAll({

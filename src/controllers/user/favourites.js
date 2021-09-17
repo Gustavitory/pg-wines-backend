@@ -30,7 +30,7 @@ const quitFav= async(req, res, next) => {
             UserId: iduser,
             ProductId: idProduct
         }})
-        return res.send('se borro')
+        return res.send('Product removed successfully');
     } catch(error){
         next(error)
     }

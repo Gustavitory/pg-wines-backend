@@ -5,7 +5,7 @@ const { v4: uuidv4 } = require('uuid');
 async function newUser(req, res, next) {
     
     if (!req.body.name || !req.body.email || !req.body.password) {
-        return res.status(400).json({ message: 'Bad request' })
+        return res.status(400).json({ error: 'Email, name and password are required' })
     }
     let photoURL="https://i.imgur.com/vfrW9Xx.png";
     if(req.body.photoURL)photoURL=req.body.photoURL
@@ -14,14 +14,14 @@ async function newUser(req, res, next) {
     let user={id,email,name,birthDate,password,admin:false,photoURL,phone};
     try {
         const exist = await User.findOne({where:{email:user.email}})
-        if (exist) { return res.status(500).send({ message: 'El email ya existe.' }) }
+        if (exist) { return res.status(500).send({ error: 'The email already exists' }) }
         const exist2 = await User.findOne({ where: { name: user.name } })
-        if (exist2 !== null) { return res.status(500).json({ message: 'El nombre de usuario ya existe.' }) }
+        if (exist2 !== null) { return res.status(500).json({ error: 'Username already exist' }) };
         const id = uuidv4()
         await User.create(user)
         return res.send(user)
     } catch (error) {
-        return res.status(500).json({ message: 'Error with DB' })
+        return res.status(500).json({ error: 'Error with DB' })
     }
 }
 
@@ -29,7 +29,7 @@ async function updateUser(req, res, next) {
     const { id} = req.body
     try {
         const user = await User.findByPk(id)
-        if(!user) return res.status(404).json({error: 'user not found' })
+        if(!user) return res.status(404).json({ error: 'User not found' })
         console.log(user)
         req.body.name ? user.name = req.body.name : '';
         req.body.password ? user.password=req.body.password:'';
@@ -38,7 +38,7 @@ async function updateUser(req, res, next) {
         user.save()
         return res.status(200).json(user)
     } catch (error) {
-        return res.status(500).json({ message: 'Error with DB' })
+        return res.status(500).json({ error: 'Error with DB' });
     };
 };
 
@@ -48,7 +48,7 @@ async function getAllUsers(req, res, next) {
         const user = await User.findAll();
         return res.send(user)
     } catch (error) {
-        next({ message: 'Bad Request' })
+        next({ error: 'Error with DB' })
     }
 }
 
@@ -60,27 +60,27 @@ async function getUserByEmail(req, res, next) {
                 email
             } 
         });
-        if(!user) return res.status(404).json({error: 'user not found'});
+        if(!user) return res.status(404).json({ error: 'User not found' });
         return res.send(user)
     } catch (error) {
-        next({ message: 'Bad Request' })
+        next({ error: 'Error with DB' });
     }
 }
 
 async function deleteUser(req, res, next) {
     if (!req.params.id) {
-        return res.status(400).json({ message: 'ID of the user is needed', status: 400 })
+        return res.status(400).json({ error: 'User id is required' });
     }
     const { id } = req.params;
     try {
         const local=await User.findByPk(id);
-        if(!local) return res.send('El usuario no existe.')
+        if(!local) return res.status(404).send({ error: 'User not found' });
         await User.destroy({
             where: {
                 id: id
             }
         })
-        return res.send('The user has been deleted.')
+        return res.send('The user has been deleted.');
     } catch (error) {
         next(error);
     }
@@ -97,14 +97,14 @@ async function loginUser(req, res, next) {
              }
         })
         if (!isUser) {
-            return res.send('Inexistent User')
+            return res.status(404).send({ error: 'User not found' });
         }
         else if(isUser.password!==password){
-            return res.send('Invalid Password')
+            return res.status(404).send({ error: 'Password is not valid' });
         }
         else return res.send(isUser)
-    } catch (err) {
-        next(err)
+    } catch (error) {
+        next(error)
     }
 }
 
