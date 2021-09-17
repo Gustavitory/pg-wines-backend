@@ -15,7 +15,7 @@ module.exports = (sequelize) => {
     },
     password: {
       type: DataTypes.STRING(64),
-      is: /^[0-9a-f]{64}$/i,
+      // is: /^[0-9a-f]{64}$/i,
       allowNull: true
     },
     email: {
@@ -35,7 +35,7 @@ module.exports = (sequelize) => {
     },
     birthDate: {
       type: DataTypes.DATEONLY,
-      allowNull: false,
+      allowNull: true,
     },
     active: {
       type: DataTypes.BOOLEAN,
@@ -43,7 +43,7 @@ module.exports = (sequelize) => {
     },
     phone: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
   });
 };
