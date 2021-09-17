@@ -97,6 +97,7 @@ async function loginUser(req, res, next) {
 }
 
 
+
 module.exports = {
     updateUser,
     getAllUsers,
