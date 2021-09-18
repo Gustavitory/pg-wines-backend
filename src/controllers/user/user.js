@@ -34,6 +34,8 @@ async function updateUser(req, res, next) {
         req.body.name ? user.name = req.body.name : '';
         req.body.password ? user.password=req.body.password:'';
         req.body.photoURL?user.photoURL=req.body.photoURL:'';
+        req.body.active?user.active=req.body.active:'';
+        req.body.admin?user.admin=req.body.admin:'';
         
         user.save()
         return res.status(200).json(user)
