@@ -44,9 +44,8 @@ const userOrders = async (req, res, next) => {
     try {
         const userOrders = await Order.findAll({
             where: {
-                userId: idUser,
-                status: 'cart'
-            },
+                userId: idUser
+                },
             include:{
                 model: Product
             }
