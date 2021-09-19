@@ -39,8 +39,7 @@ const getAllOrders = async (req, res, next) => {
 };
 
 const userOrders = async (req, res, next) => {
-    const {idUser} = req.params
-    console.log(idUser)
+    const {idUser} = req.params;
     try {
         const userOrders = await Order.findAll({
             where: {

@@ -28,7 +28,7 @@ async function postCategory(req, res) {
 async function updateCategory(req, res) {
     const { id, name } = req.body;
     if (!id) return res.status(422).send({ error: 'The category id is required' });
-    if (!name) return res.status(422).send({ error: 'You should specified the new name.' });
+    if (!name) return res.status(422).send({ error: 'You should specified the new name' });
 
     try {
         const category = await Category.findByPk(id);
