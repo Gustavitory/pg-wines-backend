@@ -9,6 +9,7 @@ const orders = require('./orders');
 const offers = require('./offers');
 const carts = require('./carts');
 const resetDb = require('./resetDb');
+const forgotPassword = require('./forgotPassword');
 const mercadoPago = require('mercadopago');
 
 mercadoPago.configure({
@@ -27,6 +28,8 @@ router.use('/offers', offers);
 router.use('/resetdb', resetDb);
 router.use('/orders', orders);
 router.use('/carts', carts);
+router.use('/forgot-password', forgotPassword);
+
 
 router.post('/pay', (req, res)=>{
 console.log('----------------------------------------')
@@ -60,6 +63,7 @@ console.log('----------------------------------------')
         console.log(error);
       });
 })
+
 
 // router.get('/feedback', function(request, response) {
 //     response.json({
