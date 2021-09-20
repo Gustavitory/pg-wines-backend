@@ -1,59 +1,63 @@
 const { Product, Review, User } = require('../../db.js');
-const { v4: uuidv4 } = require('uuid');
+// const { v4: uuidv4 } = require('uuid');
 
 const newReview = async(req, res, next) => {
-    const { comment, rating, idProd } = req.body
-    const { idUser } = req.params
-    if (!comment) return res.send({message: "Se precisa comentario"})
-    if(!rating ) return res.send({message: "Se precisa rating"})
+    const { comment, rating, idProd } = req.body;
+    const { idUser } = req.params;
+    if (!comment) return res.send({ error: "A comment is required" });
+    if(!rating ) return res.send({ error: "A reting is required" });
     try {
-        const id = uuidv4()
+        // const id = uuidv4()
         const verifyDuplicate = await Review.findOne({
             where: {
-                UserId: idUser,
-                ProductId: idProd
+                userId: idUser,
+                productId: idProd
             }
         })
-        if(verifyDuplicate) return res.send({message: "Ya has realizado una reseña de este producto"})
+        if(verifyDuplicate) return res.send({ error: "You have already reviewed this product" });
         await Review.create({
-            id,
+            // id,
             rating,
             comment,
-            UserId: idUser,
-            ProductId: idProd
+            userId: idUser,
+            productId: idProd
         })
-        const Prod = await Product.findByPk(idProd)
-        await Prod.addReview(id)
-        const user = await User.findByPk(idUser)
-        await user.addReview(id)
-        return res.send({message: 'Gracias por tu reseña'})
+        // const Prod = await Product.findByPk(idProd)
+        // await Prod.addReview(id)
+        // const user = await User.findByPk(idUser)
+        // await user.addReview(id)
+        return res.send('Thank you for your review');
     } catch (error){
         next(error)
     }
 }
 
 const updateReview = async (req, res, next)  => {
-	const {idRev} = req.body
+	const idRev = req.params.idReview;
+    const { comment, rating } = req.body;
 	try{
-		const rev = Review.findByPk(idRev)
-		if (req.body.comment) rev.comment = comment;
-		if (req.body.rating) rev.rating = rating;
-		rev.save()
-		return res.status(200).json({message: 'Review updated'})
+		let rev = await Review.findByPk(idRev);
+        if (!rev) return res.status(404).json({ error: 'There is not any review with that id' });
+		if (comment) rev.comment = comment;
+		if (rating) rev.rating = rating;
+		await rev.save();
+		return res.status(200).send('Review updated');
 	}catch(error){
-		return res.status(500).json({message: 'Error DB'})
+		return res.status(500).json(error.message);
 	}
-
 }
 
 const deleteReview = async (req, res, next) => {
-	try {
+	const idRev = req.params.idReview;
+    try {
+            let rev = await Review.findByPk(idRev);
+            if (!rev) return res.status(404).json({ error: 'There is not any review with that id' });
         	await Review.destroy({
             	where: {
-                	id: req.body.idRev
+                	id: idRev
             	}
         })
-        return res.status(200).send('the review was succesfully deleted')
+        return res.status(200).send('The review was succesfully deleted')
     } catch (error) {
         next(error);
     }
