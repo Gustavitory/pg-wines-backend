@@ -11,6 +11,7 @@ const carts = require('./carts');
 const resetDb = require('./resetDb');
 const forgotPassword = require('./forgotPassword');
 const mercadoPago = require('mercadopago');
+const review = require('./review');
 
 mercadoPago.configure({
     access_token: 'TEST-3476617001259774-091513-b3f9c1dbd722b4bf1f4c6b591295229b-402890618'
@@ -29,7 +30,7 @@ router.use('/resetdb', resetDb);
 router.use('/orders', orders);
 router.use('/carts', carts);
 router.use('/forgot-password', forgotPassword);
-
+router.use('/review',review)
 
 router.post('/pay', (req, res)=>{
 console.log('----------------------------------------')
