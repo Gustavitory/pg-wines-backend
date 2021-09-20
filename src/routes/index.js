@@ -9,6 +9,7 @@ const orders = require('./orders');
 const offers = require('./offers');
 const carts = require('./carts');
 const resetDb = require('./resetDb');
+const forgotPassword = require('./forgotPassword');
 const mercadoPago = require('mercadopago');
 const review = require('./review');
 
@@ -28,6 +29,7 @@ router.use('/offers', offers);
 router.use('/resetdb', resetDb);
 router.use('/orders', orders);
 router.use('/carts', carts);
+router.use('/forgot-password', forgotPassword);
 router.use('/review',review)
 
 router.post('/pay', (req, res)=>{
@@ -62,6 +64,7 @@ console.log('----------------------------------------')
         console.log(error);
       });
 })
+
 
 // router.get('/feedback', function(request, response) {
 //     response.json({
