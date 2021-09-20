@@ -2,13 +2,19 @@ const { DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
   sequelize.define('review', {   
-    review: {
-      type: DataTypes.TEXT,
-      allowNull: true
+    id:{
+      type: DataTypes.UUID,
+      primaryKey: true,
+      allowNull: false
     },
-    points: {
-      type: DataTypes.INTEGER,
-      allowNull: true
+    comment: {
+      type: DataTypes.TEXT
+    },
+    rating: {
+      type: DataTypes.ENUM({
+        values: ["0","1","2","3","4","5"]
+      }),
+      allowNull: false
     }
   });
 };
