@@ -72,11 +72,11 @@ Product.belongsToMany(Order, {through: OrderProduct, foreignKey: 'productID'});
 Category.hasOne(Offer);
 Offer.belongsTo(Category);
 
-Product.hasMany(Review);
-Review.belongsTo(Product);
+User.belongsToMany(Review, {through: 'user_review'})
+Review.belongsTo(User, {through: 'user_review'})
 
-User.hasMany(Review);
-Review.belongsTo(User);
+Product.belongsToMany(Review, {through: 'prod_review'});
+Review.belongsTo(Product, {through: 'prod_review'});
 
 User.hasMany(Address);
 Address.belongsTo(User);
