@@ -40,7 +40,7 @@ console.log('----------------------------------------')
 			"failure": "http://localhost:3000/#/feedback",
 			"pending": "http://localhost:3000/#/feedback"
 		},
-		auto_return: 'approved',
+		auto_return: 'success',
       };
     //   console.log(preference.items[0])
 
