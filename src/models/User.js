@@ -15,7 +15,7 @@ module.exports = (sequelize) => {
     },
     password: {
       type: DataTypes.STRING(64),
-      // is: /^[0-9a-f]{64}$/i,
+      is: /^[0-9a-f]{64}$/i,
       allowNull: true
     },
     email: {

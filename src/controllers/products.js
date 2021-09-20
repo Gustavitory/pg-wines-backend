@@ -1,6 +1,6 @@
 require('dotenv').config();
 const { Op } = require('sequelize');
-const { Product,Category,Brand } = require('../db');
+const { Product,Category,Brand,Review } = require('../db');
 const cloudinary = require('cloudinary');
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -69,6 +69,10 @@ async function getProducts(req, res) {
                     where: brand ? {
                         name: brand
                     } : null
+                },
+                {
+                    model: Review,
+                    attributes: ['comment', 'rating']
                 }
             ],
             order:[[orderBy,orderType]]
