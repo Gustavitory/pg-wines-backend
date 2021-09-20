@@ -129,10 +129,11 @@ const getAllCartItems = async (req, res, next, idUser = null) => {
             prod.name = i.name
             prod.description = i.description
             prod.cost = i.cost
-            prod.photo = i.photo
+            prod.capacity= i.capacity
+            prod.photo = i.image
             prod.stock = i.stock
-            prod.selled = i.selled
-            prod.perc_desc = i.perc_desc
+            prod.selled = i.sales
+            prod.perc_desc = i.discount
             i.orders.map(j => {
                 prod.quantity = j.orderProduct.quantity
             })
