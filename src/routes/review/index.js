@@ -6,9 +6,9 @@ const router = Router();
 
 
 
-router.post('/review/:idUser', newReview);
-router.put('/review/:idReview', updateReview);
-router.delete('/review/:idReview', deleteReview);
+router.post('/:idUser', newReview);
+router.put('/:idReview', updateReview);
+router.delete('/:idReview', deleteReview);
 
 
 module.exports = router;
