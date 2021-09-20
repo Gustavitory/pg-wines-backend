@@ -18,8 +18,8 @@ async function newUser(req, res, next) {
         const exist2 = await User.findOne({ where: { name: user.name } })
         if (exist2 !== null) { return res.status(500).json({ error: 'Username already exist' }) };
         const id = uuidv4()
-        await User.create(user)
-        return res.send(user)
+        const newUser = await User.create(user);
+        return res.send(newUser)
     } catch (error) {
         return res.status(500).json({ error: 'Error with DB' })
     }
