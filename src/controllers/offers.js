@@ -1,5 +1,6 @@
 require('dotenv').config();
 const { Offer, Product } = require('../db');
+const { Op } = require('sequelize');
 const cloudinary = require('cloudinary');
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -23,35 +24,56 @@ async function postOffer(req, res) {
     const image = req.files ? req.files : undefined;
     try {
         if (status && image && categoryId && discount && from && until) {
-            var result = [];
-            for (i=0; i<image.length; i++) {
-                result[i] = await cloudinary.v2.uploader.upload(req.files[i].path);
-                await fs.unlink(req.files[i].path);
-            }
-            result = result.map(elem => elem.secure_url);
-            const createdOffer = await Offer.create({
-                status,
-                image: result,
-                discount,
-                from,
-                until,
-                slug
+            const offers = await Offer.findAll({
+                where: {
+                    [Op.and]: {
+                        categoryId: categoryId,
+                        [Op.or]: {
+                            from: {
+                                [Op.between]: [new Date(from), new Date(until)]
+                            },
+                            until: {
+                                [Op.between]: [new Date(from), new Date(until)]
+                            }
+                        }
+                    }
+                }
             });
-            createdOffer.setCategory(categoryId);         
             
-            //start: set discount to all products from categoryId
-            // const products = await Product.findAll({
-            //     where: {
-            //         categoryId: categoryId
-            //     }
-            // });
-            // products.map(elem => {
-            //     elem.discount = discount;
-            //     elem.save();
-            // });
-            //end: set discount to all products from categoryId
+            if (offers.length === 0) {
+                var result = [];
+                for (i=0; i<image.length; i++) {
+                    result[i] = await cloudinary.v2.uploader.upload(req.files[i].path);
+                    await fs.unlink(req.files[i].path);
+                }
+                result = result.map(elem => elem.secure_url);
+                const createdOffer = await Offer.create({
+                    status,
+                    image: result,
+                    discount,
+                    from,
+                    until,
+                    slug
+                });
+                createdOffer.setCategory(parseInt(categoryId));         
+                
+                //start: set discount to all products from categoryId
+                // const products = await Product.findAll({
+                //     where: {
+                //         categoryId: categoryId
+                //     }
+                // });
+                // products.map(elem => {
+                //     elem.discount = discount;
+                //     elem.save();
+                // });
+                //end: set discount to all products from categoryId
+    
+                res.send(createdOffer);
+            } else {
+                res.status(422).send({ error: 'You cannot create an offer in this category because there is another offer in the same dates.' });
+            }
 
-            res.send(createdOffer);
         } else {
             res.status(422).send({ error: 'Fields status, image and categoryId are required' })
         }
