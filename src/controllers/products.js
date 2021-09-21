@@ -73,7 +73,73 @@ async function getProducts(req, res) {
             ],
             order:[[orderBy,orderType]]
         })
-        return res.status(200).send({totalPage:Math.ceil(count.length/itemsPerPage),products})
+
+        //start: set discount only if it found an offer
+        const fechaActual = new Date();
+        let offers;
+        let result = [];
+        for (var i=0; i<products.length; i++) {
+            offers = await Offer.findAll({
+                where: {
+                    categoryId: products[i].category.id,
+                    from: {
+                        [Op.lte]: fechaActual
+                    },
+                    until: {
+                        [Op.gte]: fechaActual
+                    }
+                }
+            });
+            if (offers.length !== 0) {
+                products[i] = {
+                    id: products[i].id,
+                    name: products[i].name,
+                    stock: products[i].stock,
+                    cost: products[i].cost,
+                    discount: offers[0].discount,
+                    description: products[i].description,
+                    capacity: products[i].capacity,
+                    image: products[i].image,
+                    sales: products[i].sales,
+                    category: products[i].category,
+                    brand: products[i].brand,
+                    packing: products[i].packing
+                }
+            } 
+            result.push(products[i]);
+        }
+        // result = products.map(async (elem, index) => {
+        //     offers = await Offer.findAll({
+        //         where: {
+        //             categoryId: elem.category.id,
+        //             from: {
+        //                 [Op.lte]: fechaActual
+        //             },
+        //             until: {
+        //                 [Op.gte]: fechaActual
+        //             }
+        //         }
+        //     });
+        //     if (offers.length !== 0) {
+        //         elem = {
+        //             id: elem.id,
+        //             name: elem.name,
+        //             stock: elem.stock,
+        //             cost: elem.cost,
+        //             discount: offers[0].discount,
+        //             description: elem.description,
+        //             capacity: elem.capacity,
+        //             image: elem.image,
+        //             sales: elem.sales,
+        //             category: elem.category,
+        //             brand: elem.brand,
+        //             packing: elem.packing
+        //         }
+        //     } 
+        // });
+        //end: set discount only if it found an offer
+
+        return res.status(200).send({totalPage:Math.ceil(count.length/itemsPerPage), products: result})
     } catch (err) {
         console.log('ERROR in getProducts', err);
     }
@@ -108,7 +174,7 @@ async function getProductById(req, res) {
                 stock: productById.stock,
                 cost: productById.cost,
                 discount: offers[0].discount,
-                daysUntilFinishDiscount: Math.floor((offers[0].until - fechaActual)/(1000*60*60*24)),
+                //daysUntilFinishDiscount: Math.floor((offers[0].until - fechaActual)/(1000*60*60*24)),
                 description: productById.description,
                 capacity: productById.capacity,
                 image: productById.image,
