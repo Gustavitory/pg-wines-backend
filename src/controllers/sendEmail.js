@@ -2,7 +2,8 @@ const nodemailer = require('nodemailer');
 require('dotenv').config();
 const { GMAIL_USER, GMAIL_PASS } = process.env;
 
-async function sendEmail(clientName, clientEmail, reason, link) {
+async function sendEmail(clientName, clientEmail, reason, link) {  // Si el tercer parámetro es 'reset-password', se debe especificar un cuarto parametro...
+                                                                   // ...con el link hacia la pagina donde se ingresa el nuevo password del usuario.    
     // Valido que a esta función le lleguen los datos necesarios.
     if (!clientName) return console.log('You must specify the client´s name.');
     if (!clientEmail) return console.log('You must specify the client´s Email.');
@@ -30,16 +31,16 @@ async function sendEmail(clientName, clientEmail, reason, link) {
     // Defino el asunto y el mensaje del Email.
     switch (reason) {
         case 'purchase':
-            emailSubject = 'Confirmación de compra.';
+            emailSubject = 'Confirmación de compra';
             emailMessaje = 'Le informamos que su compra en Bodegas Del Sur mediante Mercado Pago se ha efectuado exitosamente.';
             break;
         case 'delivery':
-            emailSubject = 'Confirmación de envío.';
+            emailSubject = 'Confirmación de envío';
             emailMessaje = 'Le informamos que los productos de su compra se encuentran en viaje a su domicilio.';
             break;
         case 'reset-password':
-            emailSubject = 'Link para generar nueva contraseña.';
-            emailMessaje = 'Le enviamos este link para que acceda al formulario de reinicio de contraseña.';
+            emailSubject = 'Link para generar su nueva contraseña';
+            emailMessaje = 'Le enviamos este link para que acceda al formulario donde podrá ingresar su nueva contraseña.';
             break;
         default:
 
@@ -53,15 +54,16 @@ async function sendEmail(clientName, clientEmail, reason, link) {
         html: `
         <span>Estimado, ${clientName}</span>
         <p>${emailMessaje}</p>
-        <p>${reason === 'reset-password' ? link : null}</p>
+        <a href=${reason === 'reset-password' ? link : null}>${reason === 'reset-password' ? '--> LINK <--' : ''}</a>
         <br>
         <br>
         <img src='https://res.cloudinary.com/bodegas-del-sur/image/upload/v1631902712/BodegasDelSur/banner_mail_nbtei2.jpg' alt="Imagen en email" width="400" height="72" />
         <br>
         <br>
-        <h1 style="color: #0000ff"><b>Bodegas Del Sur</b></h1>
+        <h1 style="color: #0000aa"><b>Bodegas Del Sur</b></h1>
               `
     }
+
 
     // Envío el Email.
     await transporter.sendMail(mailStructure, (error, info) => {
