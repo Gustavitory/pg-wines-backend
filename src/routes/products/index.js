@@ -8,8 +8,8 @@ router.get('/:id', getProductById);
 router.post('/', postProduct);
 router.put('/update',updateProduct);
 router.delete('/delete',deleteProduct);
-router.post('/addFav',addFavs);
-router.get('/favs', getFavs);
-router.delete('/quitFav',quitFav);
+router.post('/addFav/:iduser',addFavs);
+router.get('/favs/:iduser', getFavs);
+router.delete('/quitFav/:iduser',quitFav);
 
 module.exports = router;

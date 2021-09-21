@@ -3,7 +3,8 @@ const { User, Product, favourites } = require('../../db.js');
 
 async function addFavs(req, res, next) {
     const { idProduct } = req.body
-    const {iduser} = req.headers
+    const {iduser} = req.params
+    
     try {        
         const userE = await User.findByPk(iduser)
         await userE.addProduct(idProduct)
@@ -22,7 +23,8 @@ async function addFavs(req, res, next) {
 
 const quitFav= async(req, res, next) => {
     const {idProduct} = req.body
-    const {iduser} = req.headers
+    const {iduser} = req.params
+    
     try{
         // const user = User.findByPk(iduser)
         // await user.remove Product(idProduct)
@@ -37,7 +39,9 @@ const quitFav= async(req, res, next) => {
 }
 
 const getFavs = async(req, res, next) => {
-    const {iduser} = req.headers
+    const {iduser} = req.params
+    
+    
     try {
         const user = await User.findByPk(iduser, {include: Product})
         return res.json(user)
