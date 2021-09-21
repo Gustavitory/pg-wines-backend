@@ -35,13 +35,14 @@ router.use('/review',review)
 
 router.post('/pay', (req, res)=>{
 console.log('----------------------------------------')
+    
     const product = req.body.product;
     const orderId = req.body.orderId;
-    console.log(product)
+    
     // Product es un array de objetos
     let preference = {
         items: [],
-        external_reference: orderId,
+        external_reference: orderId.toString(),
         back_urls: {
 			"success": "http://localhost:3001/feedback",
 			"failure": "http://localhost:3001/feedback",
@@ -56,12 +57,12 @@ console.log('----------------------------------------')
           unit_price: item.cost,
           quantity: 1
       }))
-      console.log(preference.items)
+      
       mercadoPago.preferences.create(preference)
       .then(function(response){
       // Este valor reemplazará el string "<%= global.id %>" en tu HTML
         global.id = response.body.id;
-        console.log(global.id)
+        
         res.send(global.id)
       }).catch(function(error){
         console.log(error);
@@ -70,14 +71,26 @@ console.log('----------------------------------------')
 
 
 router.post('/pay-confirmation', async (req, res)=>{
+  
    const payId = req.body.data.id
-   const resp = await axios(`https://api.mercadopago.com/v1/payments/${payId}?access_token=TEST-3476617001259774-091513-b3f9c1dbd722b4bf1f4c6b591295229b-402890618`)
-   res.status(200).send(payId)
+   const resp = await axios.get(`https://api.mercadopago.com/v1/payments/${payId}?access_token=TEST-3476617001259774-091513-b3f9c1dbd722b4bf1f4c6b591295229b-402890618`)
+ 
+   
    console.log(resp.status)
-   if (resp.status === 'approved') {
-        
+   if (resp.data.status === 'approved') {
+     console.log(resp.data.external_reference)
+     
+    const res = await axios.put("https://pg-delsur.herokuapp.com/orders/updateOrderStatus/"+resp.data.external_reference, {status: "approved"})
+     .catch(err => console.log(err))
+     
+    
+
+    
    }
-})
+   res.status(200).send("OK")
+  }
+ 
+)
 
 // router.get('/feedback', function(request, response) {
 //     response.json({
