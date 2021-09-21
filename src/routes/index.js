@@ -1,5 +1,6 @@
 const path = require('path');
 const {Router} = require('express');
+const axios = require('axios');
 const products = require('./products');
 const categories = require('./categories');
 const brands = require('./brands');
@@ -34,11 +35,13 @@ router.use('/review',review)
 
 router.post('/pay', (req, res)=>{
 console.log('----------------------------------------')
-    const product = req.body
+    const product = req.body.product;
+    const orderId = req.body.orderId;
     console.log(product)
     // Product es un array de objetos
     let preference = {
         items: [],
+        external_reference: orderId,
         back_urls: {
 			"success": "http://localhost:3001/feedback",
 			"failure": "http://localhost:3001/feedback",
@@ -65,6 +68,16 @@ console.log('----------------------------------------')
       });
 })
 
+
+router.post('/pay-confirmation', async (req, res)=>{
+   const payId = req.body.data.id
+   const resp = await axios(`https://api.mercadopago.com/v1/payments/${payId}?access_token=TEST-3476617001259774-091513-b3f9c1dbd722b4bf1f4c6b591295229b-402890618`)
+   res.status(200).send(payId)
+   console.log(resp.status)
+   if (resp.status === 'approved') {
+        
+   }
+})
 
 // router.get('/feedback', function(request, response) {
 //     response.json({
