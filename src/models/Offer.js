@@ -27,6 +27,10 @@ module.exports = (sequelize) => {
       type: DataTypes.STRING,
       defaultValue: "",
       allowNull: true
+    },
+    offerDays: {
+      type: DataTypes.ARRAY(DataTypes.STRING(3)),
+      defaultValue: ['lun', 'mar', 'mie', 'jue', 'vie', 'sab', 'dom']
     }
   });
 };
