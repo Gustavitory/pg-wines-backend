@@ -20,8 +20,10 @@ async function getOffers(req, res) {
 }
 
 async function postOffer(req, res) {
-    const { status, categoryId, discount, from, until, slug } = req.body;
+    const { status, categoryId, discount, from, until, slug, offerDays } = req.body;
     const image = req.files ? req.files : undefined;
+    const offerDaysInArray = offerDays ? offerDays.split(',') : ['lun', 'mar', 'mie', 'jue', 'vie', 'sab', 'dom'];
+    console.log("offerDaysInArray: "+offerDaysInArray)
     try {
         if (status && image && categoryId && discount && from && until) {
             const offers = await Offer.findAll({
@@ -34,13 +36,36 @@ async function postOffer(req, res) {
                             },
                             until: {
                                 [Op.between]: [new Date(from), new Date(until)]
+                            },
+                            [Op.and]: {
+                                from: {
+                                    [Op.lte]: new Date(from)
+                                },
+                                until: {
+                                    [Op.gte]: new Date(until)
+                                }
                             }
+                        // },
+                        // offerDays: {
+                        //     [Op.in]: offerDaysInArray
                         }
                     }
                 }
             });
             
-            if (offers.length === 0) {
+            // console.log("offers: "+JSON.stringify(offers));
+            var flag = false;
+
+            for (var i=0; i<offers.length; i++) {
+                offers[i].offerDays.map((elem, index) => {
+                    // console.log("offerDays["+index+"]: "+elem)
+                    if (offerDaysInArray.includes(elem)) {
+                        flag = true;
+                    }
+                })
+            }
+
+            if ((offers.length === 0) || !flag) {
                 var result = [];
                 for (i=0; i<image.length; i++) {
                     result[i] = await cloudinary.v2.uploader.upload(req.files[i].path);
@@ -53,7 +78,8 @@ async function postOffer(req, res) {
                     discount,
                     from,
                     until,
-                    slug
+                    slug,
+                    offerDays: offerDaysInArray
                 });
                 createdOffer.setCategory(parseInt(categoryId));         
                 
