@@ -35,7 +35,7 @@ module.exports = (sequelize) => {
     },
     birthDate: {
       type: DataTypes.DATEONLY,
-      allowNull: false,
+      allowNull: true,
     },
     active: {
       type: DataTypes.BOOLEAN,
@@ -43,7 +43,7 @@ module.exports = (sequelize) => {
     },
     phone: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
   });
 };

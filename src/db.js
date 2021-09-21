@@ -72,15 +72,23 @@ Product.belongsToMany(Order, {through: OrderProduct, foreignKey: 'productID'});
 Category.hasOne(Offer);
 Offer.belongsTo(Category);
 
+// User.belongsToMany(Review, {through: 'user_review'})
+// Review.belongsTo(User, {through: 'user_review'})
+
+// Product.belongsToMany(Review, {through: 'prod_review'});
+// Review.belongsTo(Product, {through: 'prod_review'});
+
+User.hasMany(Review)
+Review.belongsTo(User)
+
 Product.hasMany(Review);
 Review.belongsTo(Product);
-
-User.hasMany(Review);
-Review.belongsTo(User);
 
 User.hasMany(Address);
 Address.belongsTo(User);
 
+User.belongsToMany(Product, {through: 'favourites', foreignKey: 'UserId'});
+Product.belongsToMany(User, {through: 'favourites', foreignKey: 'ProductId'})
 
 module.exports = {
   ...sequelize.models, // para poder importar los modelos así: const { Product, User } = require('./db.js');
