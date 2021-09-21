@@ -220,7 +220,7 @@ const updateShipStatus = async (req, res, next) => {
                     id: orderToUpdate.userId
                 }
             })
-            sendEmail(user.name, user.email, false);  // Le envio un email al usuario correspondiente para avisarle que su compra ha sido despachada.
+            sendEmail(user.name, user.email, 'delivery');  // Le envio un email al usuario correspondiente para avisarle que su compra ha sido despachada.
         }
         return res.send(orders)
     } catch (err) {
