@@ -40,7 +40,7 @@ console.log('----------------------------------------')
     let preference = {
         items: [],
         back_urls: {
-			"success": "http://localhost:3000/#/feedback",
+			"success": "https://abadalejandro.github.io/pg-wines-frontend/#/feedback",
 			"failure": "http://localhost:3000/#/feedback",
 			"pending": "http://localhost:3000/#/feedback"
 		},
