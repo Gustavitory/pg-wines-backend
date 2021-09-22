@@ -25,37 +25,15 @@ async function getProducts(req, res) {
     if(validate.includes(page))page=1;
     if(validate.includes(initPrice))initPrice=0;
     if(validate.includes(finalPrice))finalPrice=10000000;
+    console.log(categoryId)
     try {
         const count = await Product.findAll({
             where:{
                 name:{[Op.like]:`%${name}%`},
                 cost: {[Op.between]:[initPrice,finalPrice]}
             },
-            include:[
-                {
-                    model: Category,
-                    where: categoryId ? {
-                        id: categoryId
-                    } : null
-                },
-                {
-                    model: Brand,
-                    where: brand ? {
-                        name: brand
-                    } : null
-                }
-            ]
-        })
-        const products = await Product.findAll({
-            where: {
-                name: { [Op.iLike]: `%${name}%` },
-                cost: {[Op.between]:[initPrice,finalPrice]}
-            },
-            attributes: {
-                exclude
-            },
-            offset: (page - 1) * itemsPerPage,
-            limit: itemsPerPage,
+            // offset: (page - 1) * itemsPerPage,
+            // limit: itemsPerPage,
             include:[
                 {
                     model: Category,
@@ -77,11 +55,43 @@ async function getProducts(req, res) {
             ],
             order:[[orderBy,orderType]]
         })
+        // const products = await Product.findAll({
+        //     where: {
+        //         name: { [Op.iLike]: `%${name}%` },
+        //         cost: {[Op.between]:[initPrice,finalPrice]}
+        //     },
+        //     attributes: {
+        //         exclude
+        //     },
+        //     offset: (page - 1) * itemsPerPage,
+        //     limit: itemsPerPage,
+        //     include:[
+        //         {
+        //             model: Category,
+        //             where: categoryId ? {
+        //                 id: categoryId
+        //             } : null,
+        //             attributes: ['name', 'id']
+        //         },
+        //         {
+        //             model: Brand,
+        //             where: brand ? {
+        //                 name: brand
+        //             } : null
+        //         },
+        //         {
+        //             model: Review,
+        //             attributes: ['comment', 'rating']
+        //         }
+        //     ],
+        //     order:[[orderBy,orderType]]
+        // })
 
         //start: set discount only if it found an offer
         const fechaActual = new Date();
         let offers;
         let result = [];
+        const products = count;
         for (var i=0; i<products.length; i++) {
             offers = await Offer.findAll({
                 where: {
@@ -144,6 +154,8 @@ async function getProducts(req, res) {
         // });
         //end: set discount only if it found an offer
 
+        console.log("count.length: "+count.length)
+        console.log("itemsPerPage: "+itemsPerPage)
         return res.status(200).send({totalPage:Math.ceil(count.length/itemsPerPage), products: result})
     } catch (err) {
         console.log('ERROR in getProducts', err);
