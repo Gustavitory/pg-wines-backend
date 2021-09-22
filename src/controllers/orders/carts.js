@@ -13,11 +13,10 @@ const addCartItem = async (req, res, next) => {
         if (!product) {
             return next({ error: "Product not found"});
         };
-        const quantityStock = Number(quantity);
+        const quantityStock = quantity;
         if (product.stock < quantityStock) {
             return next({ error: "Not enough stock"});
-        };
-        const cost = product.cost        
+        };      
         const user = await User.findOne({
             where: {
                 id: idUser
@@ -46,7 +45,7 @@ const addCartItem = async (req, res, next) => {
             })
         }
         else {
-            orderItem.quantity+=quantity
+            orderItem.quantity=orderItem.quantity+quantity
             await orderItem.save()
         }
         const createdProduct = await Product.findOne({
@@ -63,6 +62,78 @@ const addCartItem = async (req, res, next) => {
         next(error)
     }
 };
+const varius = async (body,params) => {
+    const {idUser} = params;
+    const{id, quantity} = body;
+    if (!idUser) return next({ error: "User id is not correct"});
+    if (!quantity) return next({ error: "Quantity is required"});
+    try {
+        const product = await Product.findByPk(id);
+        if (!product) {
+            return next({ error: "Product not found"});
+        };
+        const quantityStock = quantity;
+        if (product.stock < quantityStock) {
+            return next({ error: "Not enough stock"});
+        };      
+        const user = await User.findOne({
+            where: {
+                id: idUser
+            }
+        });
+        if (!user) {
+            return next({ error: "user not found"})
+        };
+        let order = await Order.findOne({ where: { userId: idUser, status: 'cart' } });
+        if (!order) {
+            order = await Order.create()
+            await user.addOrder(order);
+        };
+        let orderItem = await OrderProduct.findOne({
+            where: {
+                orderID: order.id,
+                productID: id,
+            }
+        })
+        if(!orderItem) {
+            orderItem = await OrderProduct.create({
+                orderID: order.id,
+                productID: id,
+                quantity,
+                cost: product.cost
+            })
+        }
+        else {
+            orderItem.quantity=orderItem.quantity+quantity
+            await orderItem.save()
+        }
+        const createdProduct = await Product.findOne({
+            where: {
+                id
+            },
+            attributes: {
+                exclude
+            }
+        })
+        await createdProduct.setDataValue('quantity', orderItem.quantity)
+        return res.send(createdProduct);
+    } catch (error) {
+        next(error)
+    }
+};
+
+const addVariusItemsCart= async  (req,res,next)=>{
+    const {idUser} = req.params;
+    const{products} = req.body;
+    if (!idUser) return next({ error: "User id is not correct"});
+    if (!products.length) return next({ error: "Products are required"});
+    try {
+        products.map(prod=>{
+            const {id,quantity}=prod;
+            varius({id,quantity},req.params)
+        })
+    }catch(err){console.log(err)}
+}
 
 const deleteCartEmpty = async (req, res, next) => {
     const { idUser } = req.params     
@@ -87,7 +158,7 @@ const deleteCartEmpty = async (req, res, next) => {
     }
 };
 
-const getAllCartItems = async (req, res, next, idUser = null) => {
+const getAllCartItems = async (req, res, next) => {
     try {       
         if (!req.params.idUser) return next({ error: "User id is required" });
         let order = await Order.findOne({
@@ -234,5 +305,6 @@ module.exports = {
     getAllCartItems,
     editCartQuantity,
     deleteCartItem,
+    addVariusItemsCart
     // fullDbOrders
 }
