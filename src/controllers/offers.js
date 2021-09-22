@@ -22,7 +22,8 @@ async function getOffers(req, res) {
 async function postOffer(req, res) {
     const { status, categoryId, discount, from, until, slug, offerDays } = req.body;
     const image = req.files ? req.files : undefined;
-    const offerDaysInArray = offerDays ? offerDays.split(',') : ['lun', 'mar', 'mie', 'jue', 'vie', 'sab', 'dom'];
+    const offerDaysInArray = (offerDays || offerDays=='') ? offerDays.split(',') : ['lun', 'mar', 'mie', 'jue', 'vie', 'sab', 'dom'];
+    // const offerDaysInArray = offerDays ? offerDays.split(',') : ['lun', 'mar', 'mie', 'jue', 'vie', 'sab', 'dom'];
     console.log("offerDaysInArray: "+offerDaysInArray)
     try {
         if (status && image && categoryId && discount && from && until) {
