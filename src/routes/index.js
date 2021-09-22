@@ -44,9 +44,9 @@ console.log('----------------------------------------')
         items: [],
         external_reference: orderId.toString(),
         back_urls: {
-			"success": "http://localhost:3001/feedback",
-			"failure": "http://localhost:3001/feedback",
-			"pending": "http://localhost:3001/feedback"
+			"success": "https://abadalejandro.github.io/pg-wines-frontend/#/",
+			"failure": "https://abadalejandro.github.io/pg-wines-frontend/#/",
+			"pending": "https://abadalejandro.github.io/pg-wines-frontend/#/"
 		},
 		auto_return: 'approved',
       };
@@ -55,7 +55,7 @@ console.log('----------------------------------------')
       product.forEach(item=>preference.items.push({
           title: item.name,
           unit_price: item.cost,
-          quantity: 1
+          quantity: item.quantity
       }))
       
       mercadoPago.preferences.create(preference)
