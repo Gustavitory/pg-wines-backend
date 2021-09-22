@@ -32,8 +32,6 @@ async function getProducts(req, res) {
                 name:{[Op.like]:`%${name}%`},
                 cost: {[Op.between]:[initPrice,finalPrice]}
             },
-            // offset: (page - 1) * itemsPerPage,
-            // limit: itemsPerPage,
             include:[
                 {
                     model: Category,
@@ -55,43 +53,43 @@ async function getProducts(req, res) {
             ],
             order:[[orderBy,orderType]]
         })
-        // const products = await Product.findAll({
-        //     where: {
-        //         name: { [Op.iLike]: `%${name}%` },
-        //         cost: {[Op.between]:[initPrice,finalPrice]}
-        //     },
-        //     attributes: {
-        //         exclude
-        //     },
-        //     offset: (page - 1) * itemsPerPage,
-        //     limit: itemsPerPage,
-        //     include:[
-        //         {
-        //             model: Category,
-        //             where: categoryId ? {
-        //                 id: categoryId
-        //             } : null,
-        //             attributes: ['name', 'id']
-        //         },
-        //         {
-        //             model: Brand,
-        //             where: brand ? {
-        //                 name: brand
-        //             } : null
-        //         },
-        //         {
-        //             model: Review,
-        //             attributes: ['comment', 'rating']
-        //         }
-        //     ],
-        //     order:[[orderBy,orderType]]
-        // })
+        const products = await Product.findAll({
+            where: {
+                name: { [Op.iLike]: `%${name}%` },
+                cost: {[Op.between]:[initPrice,finalPrice]}
+            // },
+            // attributes: {
+            //     exclude
+            },
+            offset: (page - 1) * itemsPerPage,
+            limit: itemsPerPage,
+            include:[
+                {
+                    model: Category,
+                    where: categoryId ? {
+                        id: categoryId
+                    } : null,
+                    attributes: ['name', 'id']
+                },
+                {
+                    model: Brand,
+                    where: brand ? {
+                        name: brand
+                    } : null
+                },
+                {
+                    model: Review,
+                    attributes: ['comment', 'rating']
+                }
+            ],
+            order:[[orderBy,orderType]]
+        })
 
         //start: set discount only if it found an offer
         const fechaActual = new Date();
         let offers;
         let result = [];
-        const products = count;
+        // const products = count;
         for (var i=0; i<products.length; i++) {
             offers = await Offer.findAll({
                 where: {
