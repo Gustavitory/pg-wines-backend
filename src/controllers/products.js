@@ -158,7 +158,10 @@ async function getProductById(req, res) {
         if (!id) return res.status(422).send({ error: 'The product id is required' });
         let productById = await Product.findByPk(id,
             {
-                include: ["category", "brand", "packing"],
+                include: ["category", "brand", "packing", {
+                    model: Review,
+                    attributes: ['comment', 'rating']
+                }],
             })
         const fechaActual = new Date();
         const offers = await Offer.findAll({
