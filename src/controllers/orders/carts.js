@@ -62,19 +62,45 @@ const addCartItem = async (req, res, next) => {
         next(error)
     }
 };
-const varius = async (body,params) => {
-    const {idUser} = params;
-    const{id, quantity} = body;
-    if (!idUser) return next({ error: "User id is not correct"});
-    if (!quantity) return next({ error: "Quantity is required"});
+
+const deleteCartEmpty = async (req, res, next) => {
+    const { idUser } = req.params     
     try {
-        const product = await Product.findByPk(id);
+        const orderUser = await Order.findAll({
+            where: {
+                userId: idUser
+            }
+        })
+        if(orderUser.length < 1) {            
+            return next({ error: "The id is wrong" });
+        }
+        
+        const cart = await Order.destroy({
+            where: {
+                userId: idUser
+            },
+        })
+        return res.send('All products were successfully removed');
+    } catch (error) {       
+        next(error);
+    }
+};
+async function VariousCartItems(req, res, next) {
+    const {idUser} = req.params;
+    if (!idUser) return next({ error: "User id is not correct"});
+    for (let i=0;i<req.body.length;i++) {
+        
+        const {id,quantity}=req.body[i]
+        
+        try {
+            const product = await Product.findByPk(id);
+            
         if (!product) {
-            return next({ error: "Product not found"});
+            return next("Product not found");
         };
         const quantityStock = quantity;
         if (product.stock < quantityStock) {
-            return next({ error: "Not enough stock"});
+            return next("Not enough stock");
         };      
         const user = await User.findOne({
             where: {
@@ -82,7 +108,7 @@ const varius = async (body,params) => {
             }
         });
         if (!user) {
-            return next({ error: "user not found"})
+            return next("user not found")
         };
         let order = await Order.findOne({ where: { userId: idUser, status: 'cart' } });
         if (!order) {
@@ -116,48 +142,15 @@ const varius = async (body,params) => {
             }
         })
         await createdProduct.setDataValue('quantity', orderItem.quantity)
-        return res.send(createdProduct);
-    } catch (error) {
-        next(error)
-    }
-};
-
-const addVariusItemsCart= async  (req,res,next)=>{
-    const {idUser} = req.params;
-    const{products} = req.body;
-    if (!idUser) return next({ error: "User id is not correct"});
-    if (!products.length) return next({ error: "Products are required"});
-    try {
-        products.map(prod=>{
-            const {id,quantity}=prod;
-            varius({id,quantity},req.params)
-        })
-    }catch(err){console.log(err)}
-}
-
-const deleteCartEmpty = async (req, res, next) => {
-    const { idUser } = req.params     
-    try {
-        const orderUser = await Order.findAll({
-            where: {
-                userId: idUser
-            }
-        })
-        if(orderUser.length < 1) {            
-            return next({ error: "The id is wrong" });
-        }
         
-        const cart = await Order.destroy({
-            where: {
-                userId: idUser
-            },
-        })
-        return res.send('All products were successfully removed');
-    } catch (error) {       
-        next(error);
+        } catch (error) {
+            console.error(error);
+            next(error);
+        }
     }
-};
-
+    if (req) return res.send('meli products posted ok');
+    else return
+}
 const getAllCartItems = async (req, res, next) => {
     try {       
         if (!req.params.idUser) return next({ error: "User id is required" });
@@ -305,6 +298,6 @@ module.exports = {
     getAllCartItems,
     editCartQuantity,
     deleteCartItem,
-    addVariusItemsCart
+    VariousCartItems
     // fullDbOrders
 }

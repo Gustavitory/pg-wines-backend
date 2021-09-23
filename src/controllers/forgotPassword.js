@@ -37,6 +37,7 @@ async function forgotPassword(req, res) {
     // Envio el email con el link al usuario.
     sendEmail(user.name, user.email, 'reset-password', link); 
 
+    res.status(200).send('An email with a link was sent to the user')
 }
 
 
