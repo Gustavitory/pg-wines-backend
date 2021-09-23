@@ -17,27 +17,28 @@ async function forgotPassword(req, res) {
             }
         });
         if (!user) return res.status(404).json({ error: 'There is no registered user with that email' });
+        
+        // Combinando mi clave secreata con información del usuario para generear un token único y de un solo uso.
+        const secret = JWT_SECRET + user.password;
+        const payload = {
+            id: user.id,
+            email: user.email
+        }
+        
+        // Genero el token.
+        const token = jwt.sign(payload, secret, { expiresIn: '10m' });
+        
+        // Genero el link para enviarselo al usuario a su email.
+        const link = `https://abadalejandro.github.io/pg-wines-frontend/#/reset-password/${user.id}/${token}`;
+        
+        // Envio el email con el link al usuario.
+        sendEmail(user.name, user.email, 'reset-password', link); 
+        
+        res.status(200).send('An email with a link was sent to the user')
+        
     } catch (error) {
         console.log('ERROR in forgotPassword')
     }
-
-    // Combinando mi clave secreata con información del usuario para generear un token único y de un solo uso.
-    const secret = JWT_SECRET + user.password;
-    const payload = {
-        id: user.id,
-        email: user.email
-    }
-
-    // Genero el token.
-    const token = jwt.sign(payload, secret, { expiresIn: '10m' });
-
-    // Genero el link para enviarselo al usuario a su email.
-    const link = `https://abadalejandro.github.io/pg-wines-frontend/#/reset-password/${user.id}/${token}`;
-
-    // Envio el email con el link al usuario.
-    sendEmail(user.name, user.email, 'reset-password', link); 
-
-    res.status(200).send('An email with a link was sent to the user')
 }
 
 
