@@ -7,6 +7,6 @@ router.get('/deleteCartEmpty/:idUser', deleteCartEmpty);
 router.get('/getAllCartItems/:idUser', getAllCartItems); 
 router.put('/editCartQuantity/:idUser', editCartQuantity);
 router.delete('/deleteCartItem/:idUser/:idProduct', deleteCartItem); 
-router.post('addVariusItemsCart/:idUser',VariousCartItems);
+router.post('/addVariusItemsCart/:idUser',VariousCartItems);
 
 module.exports = router;

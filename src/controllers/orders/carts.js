@@ -89,15 +89,18 @@ async function VariousCartItems(req, res, next) {
     const {idUser} = req.params;
     if (!idUser) return next({ error: "User id is not correct"});
     for (let i=0;i<req.body.length;i++) {
+        
         const {id,quantity}=req.body[i]
+        
         try {
             const product = await Product.findByPk(id);
+            
         if (!product) {
-            return next({ error: "Product not found"});
+            return next("Product not found");
         };
         const quantityStock = quantity;
         if (product.stock < quantityStock) {
-            return next({ error: "Not enough stock"});
+            return next("Not enough stock");
         };      
         const user = await User.findOne({
             where: {
@@ -105,7 +108,7 @@ async function VariousCartItems(req, res, next) {
             }
         });
         if (!user) {
-            return next({ error: "user not found"})
+            return next("user not found")
         };
         let order = await Order.findOne({ where: { userId: idUser, status: 'cart' } });
         if (!order) {
@@ -139,7 +142,7 @@ async function VariousCartItems(req, res, next) {
             }
         })
         await createdProduct.setDataValue('quantity', orderItem.quantity)
-        return res.send(createdProduct);
+        
         } catch (error) {
             console.error(error);
             next(error);
