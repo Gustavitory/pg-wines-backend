@@ -2,20 +2,20 @@ const { DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
   sequelize.define('address', {    
-    address: {
+    country: {
       type: DataTypes.STRING,
       allowNull: false
     },
-    primary: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: true
+    province: {
+      type: DataTypes.STRING,
+      allowNull:false
     },
     city: {
       type: DataTypes.STRING,
       allowNull: false
     },
-    state: {
-      type: DataTypes.STRING,
+    address: {
+      type: DataTypes.TEXT,
       allowNull: false
     },
     zipCode: {
