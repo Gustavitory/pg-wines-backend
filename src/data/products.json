@@ -403,19 +403,6 @@
     "packingId": 1
   },
   {
-    "name": "Absente 53,7º 750 ml",
-    "stock": 100,
-    "cost": 6000,
-    "description": "",
-    "discount": 0,
-    "capacity": 750,
-    "image": ["https://res.cloudinary.com/bodegas-del-sur/image/upload/v1631316081/BodegasDelSur/01_1600440879.jpg"],
-    "sales": 0,
-    "categoryId": 5,
-    "brandId": 7,
-    "packingId": 1
-  },
-  {
     "name": "Luxardo Triple sec orange 750 ml",
     "stock": 100,
     "cost": 4380,

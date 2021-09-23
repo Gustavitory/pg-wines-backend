@@ -47,9 +47,9 @@ console.log('----------------------------------------')
         external_reference: orderId.toString(),
         back_urls: {
 
-			"success": "https://abadalejandro.github.io/pg-wines-frontend/#/",
-			"failure": "https://abadalejandro.github.io/pg-wines-frontend/#/",
-			"pending": "https://abadalejandro.github.io/pg-wines-frontend/#/"
+			"success": "https://abadalejandro.github.io/pg-wines-frontend/#/feedback",
+			"failure": "https://abadalejandro.github.io/pg-wines-frontend/#/feedback",
+			"pending": "https://abadalejandro.github.io/pg-wines-frontend/#/feedback"
 
 		},
 		auto_return: 'approved',
