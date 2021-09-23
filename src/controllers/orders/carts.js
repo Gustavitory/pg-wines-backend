@@ -98,10 +98,6 @@ async function VariousCartItems(req, res, next) {
         if (!product) {
             return next("Product not found");
         };
-        const quantityStock = quantity;
-        if (product.stock < quantityStock) {
-            return next("Not enough stock");
-        };      
         const user = await User.findOne({
             where: {
                 id: idUser
